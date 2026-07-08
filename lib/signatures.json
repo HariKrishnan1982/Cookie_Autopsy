@@ -1,0 +1,348 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-07-08",
+  "signatures": [
+    {
+      "patterns": ["_ga", "_gid", "_gat", "_gac_*", "_gcl_*"],
+      "company": "Google",
+      "product": "Google Analytics",
+      "category": "analytics",
+      "risk": "medium",
+      "description": "Tracks which pages you visit and how long you stay to measure site traffic",
+      "crossSite": true,
+      "dataCollected": ["pages_visited", "session_duration", "referrer", "device_type"]
+    },
+    {
+      "patterns": ["NID", "1P_JAR", "CONSENT", "DV", "OTZ"],
+      "company": "Google",
+      "product": "Google Ads / Personalization",
+      "category": "advertising",
+      "risk": "high",
+      "description": "Builds a profile of your interests across Google services for targeted ads",
+      "crossSite": true,
+      "dataCollected": ["search_history", "ad_clicks", "interests", "location", "age_group"]
+    },
+    {
+      "patterns": ["fr", "_fbp", "datr", "c_user", "xs", "sb", "wd"],
+      "company": "Meta (Facebook)",
+      "product": "Facebook Pixel / Connect",
+      "category": "tracking",
+      "risk": "high",
+      "description": "Follows you across websites to show you Facebook and Instagram ads based on your browsing",
+      "crossSite": true,
+      "dataCollected": ["pages_visited", "products_viewed", "purchases", "login_status", "interests"]
+    },
+    {
+      "patterns": ["__cf_bm", "__cfduid", "_cfuvid"],
+      "company": "Cloudflare",
+      "product": "Bot Management",
+      "category": "essential",
+      "risk": "low",
+      "description": "Makes sure you're a real human, not a bot trying to crash the website",
+      "crossSite": false,
+      "dataCollected": ["browser_fingerprint"]
+    },
+    {
+      "patterns": ["__stripe_sid", "__stripe_mid", "m"],
+      "company": "Stripe",
+      "product": "Payment Processing",
+      "category": "essential",
+      "risk": "low",
+      "description": "Prevents fraud during payment processing — keeps your card info safe",
+      "crossSite": false,
+      "dataCollected": ["session_id", "device_fingerprint"]
+    },
+    {
+      "patterns": ["_hjid", "_hjSession*", "_hjAbsoluteSessionInProgress", "_hjIncludedInSession*"],
+      "company": "Hotjar",
+      "product": "User Behavior Analytics",
+      "category": "analytics",
+      "risk": "medium",
+      "description": "Records mouse movements, clicks, and scrolls to create heatmaps for the site owner",
+      "crossSite": false,
+      "dataCollected": ["mouse_movements", "clicks", "scroll_depth", "form_interactions", "session_recordings"]
+    },
+    {
+      "patterns": ["ttwid", "msToken", "_ttp", "tt_csrf_token"],
+      "company": "TikTok",
+      "product": "TikTok Pixel",
+      "category": "tracking",
+      "risk": "high",
+      "description": "Tracks your activity across sites to target TikTok ads at you",
+      "crossSite": true,
+      "dataCollected": ["pages_visited", "video_engagement", "purchases", "interests"]
+    },
+    {
+      "patterns": ["MUID", "MUIDB", "ANON", "MSCC"],
+      "company": "Microsoft",
+      "product": "Bing / Microsoft Advertising",
+      "category": "advertising",
+      "risk": "high",
+      "description": "Links your behavior across Microsoft sites (Bing, Outlook, LinkedIn) for ad targeting",
+      "crossSite": true,
+      "dataCollected": ["search_history", "pages_visited", "ad_interactions", "interests"]
+    },
+    {
+      "patterns": ["_hjClosedSurveyInvites", "_hjDonePolls", "_hjMinimizedPolls"],
+      "company": "Hotjar",
+      "product": "Feedback & Surveys",
+      "category": "analytics",
+      "risk": "low",
+      "description": "Remembers which surveys you've already seen so they don't bug you again",
+      "crossSite": false,
+      "dataCollected": ["survey_interactions"]
+    },
+    {
+      "patterns": ["_gcl_au", "_gcl_aw", "_gcl_dc"],
+      "company": "Google",
+      "product": "Google Ads Conversion",
+      "category": "advertising",
+      "risk": "high",
+      "description": "Tracks if you bought something after clicking an ad — tells advertisers their ad worked",
+      "crossSite": true,
+      "dataCollected": ["ad_clicks", "conversions", "purchase_value"]
+    },
+    {
+      "patterns": ["_uetmsclkid", "_uetsid", "_uetvid"],
+      "company": "Microsoft",
+      "product": "Bing Ads",
+      "category": "advertising",
+      "risk": "high",
+      "description": "Tracks if you bought something after clicking a Bing ad",
+      "crossSite": true,
+      "dataCollected": ["ad_clicks", "conversions", "session_id"]
+    },
+    {
+      "patterns": ["li_gc", "li_mc", "liap", "lidc"],
+      "company": "LinkedIn",
+      "product": "LinkedIn Insight Tag",
+      "category": "tracking",
+      "risk": "high",
+      "description": "Tracks your professional profile and job interests across websites for LinkedIn ads",
+      "crossSite": true,
+      "dataCollected": ["pages_visited", "job_title", "company", "interests"]
+    },
+    {
+      "patterns": [" personalization_id", "guest_id", "ct0", "twid"],
+      "company": "Twitter/X",
+      "product": "Twitter Conversion Tracking",
+      "category": "tracking",
+      "risk": "high",
+      "description": "Follows you across sites to show you Twitter ads based on what you browse",
+      "crossSite": true,
+      "dataCollected": ["pages_visited", "interests", "ad_engagement"]
+    },
+    {
+      "patterns": ["_rdt_uuid", "_rdt_em", "_tp"],
+      "company": "Reddit",
+      "product": "Reddit Pixel",
+      "category": "advertising",
+      "risk": "high",
+      "description": "Tracks your activity to show you Reddit ads based on your browsing",
+      "crossSite": true,
+      "dataCollected": ["pages_visited", "interests", "conversions"]
+    },
+    {
+      "patterns": ["_pin_unauth", "_pinterest_ct_rt", "_pinterest_ct_ua"],
+      "company": "Pinterest",
+      "product": "Pinterest Tag",
+      "category": "advertising",
+      "risk": "high",
+      "description": "Tracks what you look at to show you Pinterest ads for similar products",
+      "crossSite": true,
+      "dataCollected": ["products_viewed", "interests", "conversions"]
+    },
+    {
+      "patterns": ["_scid", "_sc_cspv", "_scrlt"],
+      "company": "Snapchat",
+      "product": "Snap Pixel",
+      "category": "advertising",
+      "risk": "high",
+      "description": "Tracks your activity to show you Snapchat ads",
+      "crossSite": true,
+      "dataCollected": ["pages_visited", "interests", "conversions"]
+    },
+    {
+      "patterns": ["_sp_id.*", "_sp_ses.*", "sp_"],
+      "company": "Snowplow",
+      "product": "Open Source Analytics",
+      "category": "analytics",
+      "risk": "medium",
+      "description": "Tracks your behavior across the site — often used instead of Google Analytics",
+      "crossSite": false,
+      "dataCollected": ["pages_visited", "events", "session_duration"]
+    },
+    {
+      "patterns": ["_pk_id.*", "_pk_ses.*", "_pk_ref.*"],
+      "company": "Matomo",
+      "product": "Privacy-Friendly Analytics",
+      "category": "analytics",
+      "risk": "low",
+      "description": "Tracks site usage but claims to respect privacy — often self-hosted by the website",
+      "crossSite": false,
+      "dataCollected": ["pages_visited", "referrer", "device_type"]
+    },
+    {
+      "patterns": ["ajs_user_id", "ajs_anonymous_id", "ajs_group_id"],
+      "company": "Segment",
+      "product": "Customer Data Platform",
+      "category": "analytics",
+      "risk": "medium",
+      "description": "Collects your behavior and sends it to multiple marketing tools at once",
+      "crossSite": true,
+      "dataCollected": ["pages_visited", "events", "user_id", "traits"]
+    },
+    {
+      "patterns": ["intercom-id-*", "intercom-session-*", "intercom-lou-*"],
+      "company": "Intercom",
+      "product": "Customer Messaging",
+      "category": "essential",
+      "risk": "low",
+      "description": "Lets the website chat with you and remembers your conversation",
+      "crossSite": false,
+      "dataCollected": ["chat_history", "user_id", "page_context"]
+    },
+    {
+      "patterns": ["cookie-consent", "cookieconsent_status", "cc_cookie"],
+      "company": "Various",
+      "product": "Cookie Consent Banner",
+      "category": "essential",
+      "risk": "low",
+      "description": "Remembers that you clicked 'Accept' or 'Decline' on the cookie banner",
+      "crossSite": false,
+      "dataCollected": ["consent_preferences"]
+    },
+    {
+      "patterns": ["session", "sess", "sessionid", "session_id"],
+      "company": "Website",
+      "product": "Session Management",
+      "category": "essential",
+      "risk": "low",
+      "description": "Keeps you logged in while you browse — deleted when you close the browser",
+      "crossSite": false,
+      "dataCollected": ["session_token"]
+    },
+    {
+      "patterns": ["csrf", "csrftoken", "_csrf", "XSRF-TOKEN"],
+      "company": "Website",
+      "product": "Security Token",
+      "category": "essential",
+      "risk": "low",
+      "description": "Protects you from hackers submitting fake forms in your name",
+      "crossSite": false,
+      "dataCollected": ["security_token"]
+    },
+    {
+      "patterns": ["cart", "basket", "shopping_cart", "cart_id"],
+      "company": "Website",
+      "product": "Shopping Cart",
+      "category": "essential",
+      "risk": "low",
+      "description": "Remembers what you put in your shopping cart",
+      "crossSite": false,
+      "dataCollected": ["cart_items"]
+    },
+    {
+      "patterns": ["pref", "preferences", "settings", "theme", "lang", "language"],
+      "company": "Website",
+      "product": "User Preferences",
+      "category": "essential",
+      "risk": "low",
+      "description": "Remembers your settings like dark mode or language choice",
+      "crossSite": false,
+      "dataCollected": ["user_preferences"]
+    }
+  ],
+  "domainMappings": {
+    "google-analytics.com": {
+      "company": "Google",
+      "product": "Analytics",
+      "category": "analytics",
+      "risk": "medium"
+    },
+    "doubleclick.net": {
+      "company": "Google",
+      "product": "Ad Exchange",
+      "category": "advertising",
+      "risk": "high"
+    },
+    "googleadservices.com": {
+      "company": "Google",
+      "product": "Conversion Tracking",
+      "category": "advertising",
+      "risk": "high"
+    },
+    "facebook.com": {
+      "company": "Meta",
+      "product": "Facebook Connect",
+      "category": "tracking",
+      "risk": "high"
+    },
+    "connect.facebook.net": {
+      "company": "Meta",
+      "product": "Facebook Pixel",
+      "category": "tracking",
+      "risk": "high"
+    },
+    "analytics.twitter.com": {
+      "company": "Twitter/X",
+      "product": "Conversion Tracking",
+      "category": "tracking",
+      "risk": "high"
+    },
+    "ads.linkedin.com": {
+      "company": "LinkedIn",
+      "product": "Ads",
+      "category": "tracking",
+      "risk": "high"
+    },
+    "bat.bing.com": {
+      "company": "Microsoft",
+      "product": "Bing Ads",
+      "category": "advertising",
+      "risk": "high"
+    },
+    "analytics.tiktok.com": {
+      "company": "TikTok",
+      "product": "Pixel",
+      "category": "tracking",
+      "risk": "high"
+    },
+    "ct.pinterest.com": {
+      "company": "Pinterest",
+      "product": "Tag",
+      "category": "advertising",
+      "risk": "high"
+    },
+    "sc-static.net": {
+      "company": "Snapchat",
+      "product": "Pixel",
+      "category": "advertising",
+      "risk": "high"
+    },
+    "cdn.segment.com": {
+      "company": "Segment",
+      "product": "Analytics",
+      "category": "analytics",
+      "risk": "medium"
+    },
+    "js.hs-scripts.com": {
+      "company": "HubSpot",
+      "product": "Marketing",
+      "category": "analytics",
+      "risk": "medium"
+    },
+    "plausible.io": {
+      "company": "Plausible",
+      "product": "Privacy Analytics",
+      "category": "analytics",
+      "risk": "low"
+    },
+    "matomo.php": {
+      "company": "Matomo",
+      "product": "Analytics",
+      "category": "analytics",
+      "risk": "low"
+    }
+  }
+}

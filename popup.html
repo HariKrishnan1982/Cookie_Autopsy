@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🍪</div>
+    <div>
+      <h1>Cookie Autopsy</h1>
+      <div class="site-name" id="siteName">Loading...</div>
+    </div>
+  </div>
+  
+  <div class="summary" id="summary">
+    <div class="stat">
+      <span class="stat-num" id="totalCount">0</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num high" id="highRiskCount">0</span>
+      <span class="stat-label">High Risk</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="trackerCount">0</span>
+      <span class="stat-label">Trackers</span>
+    </div>
+  </div>
+  
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="essential">Essential</button>
+    <button class="filter-btn" data-filter="analytics">Analytics</button>
+    <button class="filter-btn" data-filter="advertising">Ads</button>
+    <button class="filter-btn" data-filter="tracking">Tracking</button>
+  </div>
+  
+  <div class="cookie-list" id="cookieList">
+    <div class="loading">🔍 Scanning cookies...</div>
+  </div>
+  
+  <div class="actions">
+    <button id="blockTrackers">🚫 Block All Trackers</button>
+    <button id="exportBtn">📄 Export</button>
+  </div>
+  
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
