@@ -2,51 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cookie Autopsy</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="header">
-    <span class="logo">🍪</span>
-    <div>
-      <h1>Cookie Autopsy</h1>
-      <div class="site-name" id="siteName">Loading...</div>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="site-info">
+        <div class="domain" id="siteName">Analyzing...</div>
+        <div class="status" id="riskStatus">Calculating risk...</div>
+      </div>
+      <div class="total-score" id="totalScore">--</div>
+    </header>
+
+    <!-- Summary Stats -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-val" id="totalCount">0</span>
+        <span class="stat-label">Cookies</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val danger" id="trackerCount">0</span>
+        <span class="stat-label">Trackers</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val safe" id="essentialCount">0</span>
+        <span class="stat-label">Essential</span>
+      </div>
     </div>
-  </div>
 
-  <div class="summary">
-    <div class="stat">
-      <span class="stat-num" id="totalCount">0</span>
-      <span class="stat-label">Total</span>
+    <!-- Filters -->
+    <div class="filter-bar">
+      <button class="filter active" data-filter="all">All</button>
+      <button class="filter" data-filter="tracking">Trackers</button>
+      <button class="filter" data-filter="advertising">Ads</button>
+      <button class="filter" data-filter="analytics">Analytics</button>
+      <button class="filter" data-filter="essential">Essential</button>
     </div>
-    <div class="stat">
-      <span class="stat-num high" id="highRiskCount">0</span>
-      <span class="stat-label">High Risk</span>
+
+    <!-- Cookie List -->
+    <div class="cookie-list" id="cookieList">
+      <!-- Items injected by JS -->
     </div>
-    <div class="stat">
-      <span class="stat-num" id="trackerCount">0</span>
-      <span class="stat-label">Trackers</span>
-    </div>
-  </div>
 
-  <div class="filters">
-    <button class="filter-btn active" data-filter="all">All</button>
-    <button class="filter-btn" data-filter="essential">Essential</button>
-    <button class="filter-btn" data-filter="analytics">Analytics</button>
-    <button class="filter-btn" data-filter="advertising">Ads</button>
-    <button class="filter-btn" data-filter="tracking">Tracking</button>
+    <!-- Actions -->
+    <footer class="actions">
+      <button id="blockTrackers" class="btn-danger">Block Trackers</button>
+      <button id="exportBtn" class="btn-secondary">Export JSON</button>
+    </footer>
   </div>
-
-  <div class="cookie-list" id="cookieList">
-    <div class="loading">🔍 Scanning cookies...</div>
-  </div>
-
-  <div class="actions">
-    <button id="blockTrackers">🚫 Block All Trackers</button>
-    <button id="exportBtn">📄 Export</button>
-  </div>
-
   <script src="popup.js"></script>
 </body>
 </html>
