@@ -1,4 +1,7 @@
 // popup.js
+import './lib/polyfill.js'; // If using modules
+// OR
+// (No import needed if you paste the polyfill code directly at the top of each file)
 document.addEventListener('DOMContentLoaded', async () => {
   // Get current tab info
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });

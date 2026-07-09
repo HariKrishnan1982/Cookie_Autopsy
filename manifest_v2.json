@@ -1,15 +1,21 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Cookie Autopsy",
   "version": "1.1.0",
-  "description": "Professional Cookie Analysis & Compliance Tool",
-  "permissions": ["cookies", "activeTab", "storage", "declarativeNetRequest", "notifications", "downloads"],
-  "host_permissions": ["<all_urls>"],
+  "description": "See what cookies actually do — in plain English",
+  "permissions": [
+    "cookies",
+    "activeTab",
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
   "background": {
-    "service_worker": "background.js",
-    "type": "module" 
+    "scripts": ["lib/polyfill.js", "background.js"],
+    "persistent": true
   },
-  "action": {
+  "browser_action": {
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -20,7 +26,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "js": ["lib/polyfill.js", "content.js"],
       "run_at": "document_start"
     }
   ],

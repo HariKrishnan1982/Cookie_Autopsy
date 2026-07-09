@@ -1,4 +1,7 @@
 // content.js
+import './lib/polyfill.js'; // If using modules
+// OR
+// (No import needed if you paste the polyfill code directly at the top of each file)
 // Injected into every webpage — shows toast notifications for cookie events
 
 // Prevent duplicate toasts
