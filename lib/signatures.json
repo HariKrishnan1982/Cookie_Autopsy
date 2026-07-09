@@ -3,7 +3,7 @@
   "lastUpdated": "2026-07-08",
   "signatures": [
     {
-      "patterns": ["_ga", "_gid", "_gat", "_gac_*", "_gcl_*"],
+      "patterns": ["_ga", "_gid", "_gat", "gac", "gcl"],
       "company": "Google",
       "product": "Google Analytics",
       "category": "analytics",
@@ -123,7 +123,7 @@
       "dataCollected": ["pages_visited", "job_title", "company", "interests"]
     },
     {
-      "patterns": [" personalization_id", "guest_id", "ct0", "twid"],
+      "patterns": ["personalization_id", "guest_id", "ct0", "twid"],
       "company": "Twitter/X",
       "product": "Twitter Conversion Tracking",
       "category": "tracking",
@@ -163,7 +163,7 @@
       "dataCollected": ["pages_visited", "interests", "conversions"]
     },
     {
-      "patterns": ["_sp_id.*", "_sp_ses.*", "sp_"],
+      "patterns": ["sp_id.", "_sp_ses.", "sp"],
       "company": "Snowplow",
       "product": "Open Source Analytics",
       "category": "analytics",
@@ -173,7 +173,7 @@
       "dataCollected": ["pages_visited", "events", "session_duration"]
     },
     {
-      "patterns": ["_pk_id.*", "_pk_ses.*", "_pk_ref.*"],
+      "patterns": ["_pk_id.", "_pk_ses.", "_pk_ref.*"],
       "company": "Matomo",
       "product": "Privacy-Friendly Analytics",
       "category": "analytics",
@@ -193,7 +193,7 @@
       "dataCollected": ["pages_visited", "events", "user_id", "traits"]
     },
     {
-      "patterns": ["intercom-id-*", "intercom-session-*", "intercom-lou-*"],
+      "patterns": ["intercom-id-", "intercom-session-", "intercom-lou-*"],
       "company": "Intercom",
       "product": "Customer Messaging",
       "category": "essential",
