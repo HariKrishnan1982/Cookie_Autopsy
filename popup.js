@@ -1,19 +1,27 @@
 // popup.js
-import './lib/polyfill.js'; // If using modules
-// OR
-// (No import needed if you paste the polyfill code directly at the top of each file)
+
+// 1. Professional Polyfill for Firefox/Chrome compatibility
+if (typeof browser !== 'undefined') {
+  window.chrome = browser;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   // Get current tab info
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   const siteName = tab?.url ? new URL(tab.url).hostname : 'Unknown site';
-  document.getElementById('siteName').textContent = siteName;
+  
+  const siteNameEl = document.getElementById('siteName');
+  if (siteNameEl) siteNameEl.textContent = siteName;
 
   // Fetch and display cookies
   let allCookies = [];
   try {
     allCookies = await chrome.runtime.sendMessage({ action: 'getCookiesForTab' });
   } catch (e) {
-    document.getElementById('cookieList').innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔒</div><div>Can't read cookies on this page.<br>Try a regular website.</div></div>`;
+    const list = document.getElementById('cookieList');
+    if (list) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔒</div><div>Can't read cookies on this page.<br>Try a regular website.</div></div>`;
+    }
     return;
   }
 
@@ -21,22 +29,54 @@ document.addEventListener('DOMContentLoaded', async () => {
   const trackers = allCookies.filter(c => c.classification.category === 'tracking' || c.classification.category === 'advertising');
   const essential = allCookies.filter(c => c.classification.category === 'essential');
   
-  document.getElementById('totalCount').textContent = allCookies.length;
-  document.getElementById('trackerCount').textContent = trackers.length;
-  document.getElementById('essentialCount').textContent = essential.length;
+  const totalCountEl = document.getElementById('totalCount');
+  const trackerCountEl = document.getElementById('trackerCount');
+  const essentialCountEl = document.getElementById('essentialCount');
 
-  // Calculate average risk score for header
+  if (totalCountEl) totalCountEl.textContent = allCookies.length;
+  if (trackerCountEl) trackerCountEl.textContent = trackers.length;
+  if (essentialCountEl) essentialCountEl.textContent = essential.length;
+
+  // Calculate average risk score for header (Industrial Dashboard Feature)
   if (allCookies.length > 0) {
     const totalScore = allCookies.reduce((acc, c) => acc + c.riskScore.score, 0);
     const avgScore = Math.round(totalScore / allCookies.length);
     const scoreEl = document.getElementById('totalScore');
-    scoreEl.textContent = avgScore;
-    scoreEl.style.color = avgScore > 60 ? 'var(--danger)' : avgScore > 30 ? 'var(--warning)' : 'var(--success)';
-    document.getElementById('riskStatus').textContent = avgScore > 60 ? 'High Risk Environment' : avgScore > 30 ? 'Moderate Tracking' : 'Low Risk';
+    const statusEl = document.getElementById('riskStatus');
+    
+    if (scoreEl) {
+      scoreEl.textContent = avgScore;
+      scoreEl.style.color = avgScore > 60 ? 'var(--danger)' : avgScore > 30 ? 'var(--warning)' : 'var(--success)';
+    }
+    if (statusEl) {
+      statusEl.textContent = avgScore > 60 ? 'High Risk Environment' : avgScore > 30 ? 'Moderate Tracking' : 'Low Risk';
+    }
   }
 
   // Render the list
   renderCookieList(allCookies);
+
+  // Check for Tracker Syncs (Forensic Mode)
+  try {
+    const syncResult = await chrome.runtime.sendMessage({ action: 'detectSyncs' });
+    if (syncResult && syncResult.syncs && syncResult.syncs.length > 0) {
+      const alertBox = document.getElementById('syncAlert');
+      const desc = document.getElementById('syncDesc');
+      
+      if (alertBox && desc) {
+        const companies = syncResult.syncs[0].companies.join(', ');
+        desc.textContent = `${companies} are sharing your ID.`;
+        alertBox.style.display = 'flex';
+        
+        // Optional: Click to see more details
+        alertBox.addEventListener('click', () => {
+          console.log('Sync Details:', syncResult.syncs);
+        });
+      }
+    }
+  } catch (e) {
+    console.warn('Sync detection not available or failed.', e);
+  }
 
   // Filter buttons
   document.querySelectorAll('.filter').forEach(btn => {
@@ -52,54 +92,60 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Block trackers button
-  document.getElementById('blockTrackers').addEventListener('click', async () => {
-    const btn = document.getElementById('blockTrackers');
-    btn.textContent = '⏳ Blocking...';
-    btn.disabled = true;
-    try {
-      const result = await chrome.runtime.sendMessage({ 
-        action: 'blockByCategory', 
-        category: 'tracking' 
-      });
-      btn.textContent = `✅ Blocked ${result.blocked}`;
-      setTimeout(() => {
-        btn.textContent = 'Block Trackers';
-        btn.disabled = false;
-        // Refresh list
-        window.location.reload();
-      }, 2000);
-    } catch (e) {
-      btn.textContent = '❌ Error';
-      setTimeout(() => {
-        btn.textContent = 'Block Trackers';
-        btn.disabled = false;
-      }, 2000);
-    }
-  });
+  const blockBtn = document.getElementById('blockTrackers');
+  if (blockBtn) {
+    blockBtn.addEventListener('click', async () => {
+      blockBtn.textContent = '⏳ Blocking...';
+      blockBtn.disabled = true;
+      try {
+        const result = await chrome.runtime.sendMessage({ 
+          action: 'blockByCategory', 
+          category: 'tracking' 
+        });
+        blockBtn.textContent = `✅ Blocked ${result.blocked}`;
+        setTimeout(() => {
+          blockBtn.textContent = 'Block Trackers';
+          blockBtn.disabled = false;
+          // Refresh list to show changes
+          window.location.reload();
+        }, 2000);
+      } catch (e) {
+        blockBtn.textContent = '❌ Error';
+        setTimeout(() => {
+          blockBtn.textContent = 'Block Trackers';
+          blockBtn.disabled = false;
+        }, 2000);
+      }
+    });
+  }
 
   // Export button
-  document.getElementById('exportBtn').addEventListener('click', async () => {
-    const btn = document.getElementById('exportBtn');
-    btn.textContent = '⏳ Exporting...';
-    try {
-      const report = await chrome.runtime.sendMessage({ action: 'exportReport', format: 'json' });
-      const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      await chrome.downloads.download({ 
-        url, 
-        filename: `cookie-autopsy-${siteName}-${Date.now()}.json` 
-      });
-      btn.textContent = '✅ Downloaded';
-      setTimeout(() => btn.textContent = 'Export JSON', 2000);
-    } catch (e) {
-      btn.textContent = '❌ Error';
-      setTimeout(() => btn.textContent = 'Export JSON', 2000);
-    }
-  });
+  const exportBtn = document.getElementById('exportBtn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', async () => {
+      exportBtn.textContent = '⏳ Exporting...';
+      try {
+        const report = await chrome.runtime.sendMessage({ action: 'exportReport', format: 'json' });
+        const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        await chrome.downloads.download({ 
+          url, 
+          filename: `cookie-autopsy-${siteName}-${Date.now()}.json` 
+        });
+        exportBtn.textContent = '✅ Downloaded';
+        setTimeout(() => exportBtn.textContent = 'Export JSON', 2000);
+      } catch (e) {
+        exportBtn.textContent = '❌ Error';
+        setTimeout(() => exportBtn.textContent = 'Export JSON', 2000);
+      }
+    });
+  }
 });
 
 function renderCookieList(cookies) {
   const container = document.getElementById('cookieList');
+  if (!container) return;
+
   if (cookies.length === 0) {
     container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🍪</div><div>No cookies found for this filter.</div></div>`;
     return;
