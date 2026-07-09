@@ -7,7 +7,7 @@
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js",
-    "type": "module" 
+    "type": "module"
   },
   "action": {
     "default_popup": "popup.html",
