@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "lastUpdated": "2026-07-08",
+  "version": "1.2.0",
+  "lastUpdated": "2026-07-10",
   "signatures": [
     {
       "patterns": ["_ga", "_gid", "_gat", "gac", "gcl"],
@@ -8,79 +8,139 @@
       "product": "Google Analytics",
       "category": "analytics",
       "risk": "medium",
-      "description": "Tracks which pages you visit and how long you stay to measure site traffic",
+      "description": "Tracks page visits, bounce rates, and session durations to measure site performance and usage traffic.",
       "crossSite": true,
       "dataCollected": ["pages_visited", "session_duration", "referrer", "device_type"]
     },
     {
-      "patterns": ["NID", "1P_JAR", "CONSENT", "DV", "OTZ"],
+      "patterns": ["NID", "1P_JAR", "CONSENT", "DV", "OTZ", "AEC", "SOCS"],
       "company": "Google",
       "product": "Google Ads / Personalization",
       "category": "advertising",
       "risk": "high",
-      "description": "Builds a profile of your interests across Google services for targeted ads",
+      "description": "Builds a profile of interests based on search habits to display customized advertisements across Google properties.",
       "crossSite": true,
       "dataCollected": ["search_history", "ad_clicks", "interests", "location", "age_group"]
     },
     {
-      "patterns": ["fr", "_fbp", "datr", "c_user", "xs", "sb", "wd"],
-      "company": "Meta (Facebook)",
-      "product": "Facebook Pixel / Connect",
+      "patterns": ["HSID", "SSID", "APISID", "SAPISID", "SID", "SIDCC", "GAPS", "SEARCH_SAMESITE"],
+      "company": "Google",
+      "product": "Core Security & Authentication",
+      "category": "essential",
+      "risk": "low",
+      "description": "Digitally signed and encrypted records containing user accounts, verification history, and anti-hijacking layers.",
+      "crossSite": false,
+      "dataCollected": ["user_id", "login_status", "device_fingerprint"]
+    },
+    {
+      "patterns": ["__Secure-3PAPISID", "__Secure-3PSID", "__Secure-3PSIDCC", "__Secure-1PAPISID", "__Secure-1PSID", "__Secure-1PSIDCC", "__Secure-ENID"],
+      "company": "Google",
+      "product": "Account Personalization & Verification",
+      "category": "advertising",
+      "risk": "high",
+      "description": "Used for authenticating users, preventing fraudulent login credentials, and targeting relevant advertisements.",
+      "crossSite": true,
+      "dataCollected": ["ad_interactions", "login_status", "search_history"]
+    },
+    {
+      "patterns": ["DSID", "IDE"],
+      "company": "Google",
+      "product": "DoubleClick Ad Server",
+      "category": "advertising",
+      "risk": "high",
+      "description": "Tracks user actions across different websites to display relevant ads and measure campaign effectiveness.",
+      "crossSite": true,
+      "dataCollected": ["ad_clicks", "pages_visited", "conversions"]
+    },
+    {
+      "patterns": ["PREF"],
+      "company": "Google / YouTube",
+      "product": "Preferences",
+      "category": "essential",
+      "risk": "low",
+      "description": "Stores user preferences, settings, and display configuration choices like theme selection or auto-play options.",
+      "crossSite": false,
+      "dataCollected": ["user_preferences", "language_code", "autoplay_setting"]
+    },
+    {
+      "patterns": ["GPS"],
+      "company": "Google / YouTube",
+      "product": "GPS Tracking",
       "category": "tracking",
       "risk": "high",
-      "description": "Follows you across websites to show you Facebook and Instagram ads based on your browsing",
+      "description": "Measures and registers a unique ID on mobile devices to enable tracking based on geographical GPS location.",
       "crossSite": true,
-      "dataCollected": ["pages_visited", "products_viewed", "purchases", "login_status", "interests"]
+      "dataCollected": ["geolocation", "device_id"]
     },
     {
-      "patterns": ["__cf_bm", "__cfduid", "_cfuvid"],
+      "patterns": ["VISITOR_INFO1_LIVE"],
+      "company": "Google / YouTube",
+      "product": "Bandwidth & Player Stats",
+      "category": "analytics",
+      "risk": "medium",
+      "description": "Measures connection bandwidth and player performance to determine which video interface fits the browser context.",
+      "crossSite": false,
+      "dataCollected": ["bandwidth_speed", "player_resolution", "session_metrics"]
+    },
+    {
+      "patterns": ["YSC"],
+      "company": "Google / YouTube",
+      "product": "User Session Video Tracker",
+      "category": "analytics",
+      "risk": "medium",
+      "description": "Stores a unique user ID to keep statistics of which videos on the site you have watched and your interaction rates.",
+      "crossSite": false,
+      "dataCollected": ["video_engagement", "watch_history", "clicks"]
+    },
+    {
+      "patterns": ["LOGIN_INFO"],
+      "company": "Google / YouTube",
+      "product": "Sign-in Credentials Session",
+      "category": "essential",
+      "risk": "low",
+      "description": "Remembers sign-in credentials and settings, keeping you logged in when browsing YouTube or Google services.",
+      "crossSite": false,
+      "dataCollected": ["login_status", "credentials"]
+    },
+    {
+      "patterns": ["fr", "_fbp", "datr", "sb", "c_user", "xs", "presence", "wd", "dpr", "usida"],
+      "company": "Meta (Facebook)",
+      "product": "Facebook Connect / Pixel",
+      "category": "tracking",
+      "risk": "high",
+      "description": "Builds targeted advertising profiles based on websites visited, purchases, and browser fingerprint metadata.",
+      "crossSite": true,
+      "dataCollected": ["pages_visited", "purchases", "facebook_id", "device_type", "active_chats"]
+    },
+    {
+      "patterns": ["__cf_bm", "__cfduid", "_cfuvid", "cf_clearance"],
       "company": "Cloudflare",
-      "product": "Bot Management",
+      "product": "Bot Management & Security",
       "category": "essential",
       "risk": "low",
-      "description": "Makes sure you're a real human, not a bot trying to crash the website",
+      "description": "Distinguishes human visitors from malicious bots, manages rate limits, and secures web resource traffic.",
       "crossSite": false,
-      "dataCollected": ["browser_fingerprint"]
+      "dataCollected": ["browser_fingerprint", "ip_address", "request_rates"]
     },
     {
-      "patterns": ["__stripe_sid", "__stripe_mid", "m"],
+      "patterns": ["__stripe_sid", "__stripe_mid", "m", "cid"],
       "company": "Stripe",
-      "product": "Payment Processing",
+      "product": "Payment Processing & Fraud Prevention",
       "category": "essential",
       "risk": "low",
-      "description": "Prevents fraud during payment processing — keeps your card info safe",
+      "description": "Analyzes behavior patterns and device signatures during transaction checkouts to prevent credit card fraud.",
       "crossSite": false,
-      "dataCollected": ["session_id", "device_fingerprint"]
+      "dataCollected": ["session_id", "device_fingerprint", "device_id"]
     },
     {
-      "patterns": ["_hjid", "_hjSession*", "_hjAbsoluteSessionInProgress", "_hjIncludedInSession*"],
+      "patterns": ["_hjid", "_hjAbsoluteSessionInProgress", "_hjIncludedInSession*", "_hjIncludedInPageviewSample", "_hjSession_*", "_hjSessionUser_*", "_hjRecordingEnabled", "_hjRecordingLastActivity"],
       "company": "Hotjar",
       "product": "User Behavior Analytics",
       "category": "analytics",
       "risk": "medium",
-      "description": "Records mouse movements, clicks, and scrolls to create heatmaps for the site owner",
+      "description": "Records visitor mouse movements, scroll behavior, click coordinates, and keystroke events for usability heatmaps.",
       "crossSite": false,
-      "dataCollected": ["mouse_movements", "clicks", "scroll_depth", "form_interactions", "session_recordings"]
-    },
-    {
-      "patterns": ["ttwid", "msToken", "_ttp", "tt_csrf_token"],
-      "company": "TikTok",
-      "product": "TikTok Pixel",
-      "category": "tracking",
-      "risk": "high",
-      "description": "Tracks your activity across sites to target TikTok ads at you",
-      "crossSite": true,
-      "dataCollected": ["pages_visited", "video_engagement", "purchases", "interests"]
-    },
-    {
-      "patterns": ["MUID", "MUIDB", "ANON", "MSCC"],
-      "company": "Microsoft",
-      "product": "Bing / Microsoft Advertising",
-      "category": "advertising",
-      "risk": "high",
-      "description": "Links your behavior across Microsoft sites (Bing, Outlook, LinkedIn) for ad targeting",
-      "crossSite": true,
-      "dataCollected": ["search_history", "pages_visited", "ad_interactions", "interests"]
+      "dataCollected": ["mouse_movements", "scroll_depth", "clicks", "form_interactions"]
     },
     {
       "patterns": ["_hjClosedSurveyInvites", "_hjDonePolls", "_hjMinimizedPolls"],
@@ -88,69 +148,69 @@
       "product": "Feedback & Surveys",
       "category": "analytics",
       "risk": "low",
-      "description": "Remembers which surveys you've already seen so they don't bug you again",
+      "description": "Remembers when a customer has completed or closed a web survey, feedback poll, or invitation widget.",
       "crossSite": false,
-      "dataCollected": ["survey_interactions"]
+      "dataCollected": ["poll_interactions", "survey_state"]
     },
     {
-      "patterns": ["_gcl_au", "_gcl_aw", "_gcl_dc"],
-      "company": "Google",
-      "product": "Google Ads Conversion",
-      "category": "advertising",
-      "risk": "high",
-      "description": "Tracks if you bought something after clicking an ad — tells advertisers their ad worked",
-      "crossSite": true,
-      "dataCollected": ["ad_clicks", "conversions", "purchase_value"]
-    },
-    {
-      "patterns": ["_uetmsclkid", "_uetsid", "_uetvid"],
+      "patterns": ["MUID", "MUIDB", "ANON", "MSCC", "_uetsid", "_vetvid"],
       "company": "Microsoft",
-      "product": "Bing Ads",
+      "product": "Bing / Microsoft Advertising",
       "category": "advertising",
       "risk": "high",
-      "description": "Tracks if you bought something after clicking a Bing ad",
+      "description": "Identifies web browsers across Microsoft products for demographic tracking, ad clicks, and target recommendations.",
       "crossSite": true,
-      "dataCollected": ["ad_clicks", "conversions", "session_id"]
+      "dataCollected": ["search_history", "ad_clicks", "demographics", "interests"]
     },
     {
-      "patterns": ["li_gc", "li_mc", "liap", "lidc"],
+      "patterns": ["RP", "MSPAuth", "MSFPC"],
+      "company": "Microsoft",
+      "product": "Live Portal Authentication",
+      "category": "essential",
+      "risk": "low",
+      "description": "Maintains user authentication states, session tokens, and security contexts across Outlook, Office, and Live platforms.",
+      "crossSite": false,
+      "dataCollected": ["login_status", "session_token"]
+    },
+    {
+      "patterns": ["li_gc", "li_mc", "liap", "lidc", "li_sugr", "UserMatchHistory", "bcookie", "bscookie", "JSESSIONID"],
       "company": "LinkedIn",
-      "product": "LinkedIn Insight Tag",
+      "product": "Insight Tracking Tag",
       "category": "tracking",
       "risk": "high",
-      "description": "Tracks your professional profile and job interests across websites for LinkedIn ads",
+      "description": "Identifies LinkedIn members on external sites to map professional characteristics for employer targeting campaigns.",
       "crossSite": true,
-      "dataCollected": ["pages_visited", "job_title", "company", "interests"]
+      "dataCollected": ["pages_visited", "job_interests", "professional_profile", "linked_id"]
     },
     {
-      "patterns": ["personalization_id", "guest_id", "ct0", "twid"],
+      "patterns": ["personalization_id", "guest_id", "guest_id_ads", "guest_id_marketing", "ct0", "twid", "auth_token"],
       "company": "Twitter/X",
-      "product": "Twitter Conversion Tracking",
+      "product": "Conversion Ads Tracking",
       "category": "tracking",
       "risk": "high",
-      "description": "Follows you across sites to show you Twitter ads based on what you browse",
+      "description": "Monitors customer journeys across websites to evaluate and deploy relevant ad updates on the Twitter/X feed.",
       "crossSite": true,
-      "dataCollected": ["pages_visited", "interests", "ad_engagement"]
+      "dataCollected": ["pages_visited", "ad_engagement", "twitter_handle", "session_token"]
     },
     {
-      "patterns": ["_rdt_uuid", "_rdt_em", "_tp"],
+      "patterns": ["_rdt_uuid", "_rdt_em", "_tp", "reddit_session"],
       "company": "Reddit",
-      "product": "Reddit Pixel",
+      "product": "Reddit Pixel Analytics",
       "category": "advertising",
       "risk": "high",
-      "description": "Tracks your activity to show you Reddit ads based on your browsing",
+      "description": "Monitors visitor activity to trigger relevant advertisements or content recommendations inside the Reddit app.",
       "crossSite": true,
-      "dataCollected": ["pages_visited", "interests", "conversions"]
+      "dataCollected": ["pages_visited", "interests", "conversions", "session_id"]
     },
     {
-      "patterns": ["_pin_unauth", "_pinterest_ct_rt", "_pinterest_ct_ua"],
+      "patterns": ["_pin_unauth", "_pinterest_ct_rt", "_pinterest_ct_ua", "_pinterest_sess"],
       "company": "Pinterest",
-      "product": "Pinterest Tag",
+      "product": "Pinterest Conversion Tag",
       "category": "advertising",
       "risk": "high",
-      "description": "Tracks what you look at to show you Pinterest ads for similar products",
+      "description": "Tracks clicks on Pinterest Pins and page visits on host domains to display related commercial recommendations.",
       "crossSite": true,
-      "dataCollected": ["products_viewed", "interests", "conversions"]
+      "dataCollected": ["products_viewed", "pin_clicks", "conversions"]
     },
     {
       "patterns": ["_scid", "_sc_cspv", "_scrlt"],
@@ -158,99 +218,229 @@
       "product": "Snap Pixel",
       "category": "advertising",
       "risk": "high",
-      "description": "Tracks your activity to show you Snapchat ads",
+      "description": "Tracks the actions users take on websites to measure advertising efficacy and optimize Snapchat campaigns.",
       "crossSite": true,
-      "dataCollected": ["pages_visited", "interests", "conversions"]
+      "dataCollected": ["pages_visited", "conversions", "ad_interactions"]
     },
     {
       "patterns": ["sp_id.", "_sp_ses.", "sp"],
       "company": "Snowplow",
-      "product": "Open Source Analytics",
+      "product": "Open Analytics Data Pipeline",
       "category": "analytics",
       "risk": "medium",
-      "description": "Tracks your behavior across the site — often used instead of Google Analytics",
+      "description": "Self-hosted platform tracks custom user events, page interactions, and screen dimensions for product development.",
       "crossSite": false,
-      "dataCollected": ["pages_visited", "events", "session_duration"]
+      "dataCollected": ["pages_visited", "custom_events", "session_duration"]
     },
     {
       "patterns": ["_pk_id.", "_pk_ses.", "_pk_ref.*"],
       "company": "Matomo",
-      "product": "Privacy-Friendly Analytics",
+      "product": "Open-Source Web Analytics",
       "category": "analytics",
       "risk": "low",
-      "description": "Tracks site usage but claims to respect privacy — often self-hosted by the website",
+      "description": "A privacy-centric analytics cookie tracking page sequences, screen widths, and origin referral URLs.",
       "crossSite": false,
-      "dataCollected": ["pages_visited", "referrer", "device_type"]
+      "dataCollected": ["pages_visited", "referrer_url", "screen_size"]
     },
     {
       "patterns": ["ajs_user_id", "ajs_anonymous_id", "ajs_group_id"],
       "company": "Segment",
-      "product": "Customer Data Platform",
+      "product": "Customer Data Hub",
       "category": "analytics",
       "risk": "medium",
-      "description": "Collects your behavior and sends it to multiple marketing tools at once",
+      "description": "Collects user identity profiles and event paths to synchronize details across multiple connected business databases.",
       "crossSite": true,
-      "dataCollected": ["pages_visited", "events", "user_id", "traits"]
+      "dataCollected": ["user_id", "pages_visited", "traits", "custom_events"]
     },
     {
       "patterns": ["intercom-id-", "intercom-session-", "intercom-lou-*"],
       "company": "Intercom",
-      "product": "Customer Messaging",
+      "product": "Customer Live Support Chat",
       "category": "essential",
       "risk": "low",
-      "description": "Lets the website chat with you and remembers your conversation",
+      "description": "Provides customer support chat, remembers chat histories, and logs connection states.",
       "crossSite": false,
-      "dataCollected": ["chat_history", "user_id", "page_context"]
+      "dataCollected": ["chat_messages", "visitor_id", "page_context"]
     },
     {
-      "patterns": ["cookie-consent", "cookieconsent_status", "cc_cookie"],
-      "company": "Various",
-      "product": "Cookie Consent Banner",
+      "patterns": ["session-id", "session-id-time", "ubid-main", "x-main", "at-main", "sess-at-main", "session-token", "csm-sid", "i18n-prefs", "sp-cdn"],
+      "company": "Amazon",
+      "product": "E-Commerce Customer Session",
       "category": "essential",
       "risk": "low",
-      "description": "Remembers that you clicked 'Accept' or 'Decline' on the cookie banner",
+      "description": "Keeps customers authenticated, remembers localization details, tracks performance metrics, and supports streaming layouts.",
+      "crossSite": false,
+      "dataCollected": ["user_id", "login_status", "language", "session_metrics"]
+    },
+    {
+      "patterns": ["_shopify_y", "_shopify_s", "_y", "_s", "cart_sig", "keep_alive", "secure_customer_sig", "localization"],
+      "company": "Shopify",
+      "product": "Shopify Commerce Platform",
+      "category": "essential",
+      "risk": "low",
+      "description": "Powers the customer shopping cart checkout path, retains store country currencies, and secures transaction keys.",
+      "crossSite": false,
+      "dataCollected": ["cart_contents", "localization_setting", "customer_id"]
+    },
+    {
+      "patterns": ["__hs_opt_out", "__hs_do_not_track", "__hssc", "__hssrc", "__hstc", "hubspotutk"],
+      "company": "HubSpot",
+      "product": "CRM & Marketing Analytics",
+      "category": "analytics",
+      "risk": "medium",
+      "description": "Tracks website visits, records session lifetimes, checks for browser close loops, and links to lead campaigns.",
+      "crossSite": true,
+      "dataCollected": ["pages_visited", "lead_token", "session_id"]
+    },
+    {
+      "patterns": ["wordpress_logged_in_*", "wordpress_sec_*", "wordpress_test_cookie", "wp-settings-*", "wp-settings-time-*"],
+      "company": "WordPress",
+      "product": "CMS Engine",
+      "category": "essential",
+      "risk": "low",
+      "description": "Manages user dashboard authentication, tests if cookie engines are enabled, and saves admin UI preferences.",
+      "crossSite": false,
+      "dataCollected": ["admin_preferences", "login_status", "test_cookie"]
+    },
+    {
+      "patterns": ["visitor_id*", "pi_opt_in*"],
+      "company": "Salesforce / Pardot",
+      "product": "B2B Marketing Automation",
+      "category": "tracking",
+      "risk": "high",
+      "description": "Identifies web visitors and links their actions to business CRM records for sales team analysis.",
+      "crossSite": true,
+      "dataCollected": ["visitor_id", "pages_visited", "email_interactions"]
+    },
+    {
+      "patterns": ["B", "A3", "uuid2", "anj", "tuuid", "pugt", "id", "mc", "_ap_id"],
+      "company": "Ad Exchange Network",
+      "product": "DoubleClick / Yahoo / AppNexus / BidSwitch",
+      "category": "advertising",
+      "risk": "high",
+      "description": "Third-party ad network cookies designed to synchronize user IDs globally and auction ad placements in real time.",
+      "crossSite": true,
+      "dataCollected": ["user_id", "ad_clicks", "browsing_history", "interests"]
+    },
+    {
+      "patterns": ["sp_t", "sp_dc", "sp_key", "wp_access_token"],
+      "company": "Spotify",
+      "product": "Web Streaming Service",
+      "category": "essential",
+      "risk": "low",
+      "description": "Authorizes active accounts, verifies access tokens, and securely decrypts audio content streams.",
+      "crossSite": false,
+      "dataCollected": ["login_status", "access_token", "music_preferences"]
+    },
+    {
+      "patterns": ["nfvdid", "memclid", "SecureNetflixId", "NetflixId"],
+      "company": "Netflix",
+      "product": "Streaming Authentication",
+      "category": "essential",
+      "risk": "low",
+      "description": "Identifies user devices and profiles, keeping account access authorized across videos.",
+      "crossSite": false,
+      "dataCollected": ["user_id", "device_type", "login_status"]
+    },
+    {
+      "patterns": ["ts", "ts_c", "lval", "enforce_policy"],
+      "company": "PayPal",
+      "product": "Safe Checkout Authentication",
+      "category": "essential",
+      "risk": "low",
+      "description": "Secures payment channels, checks for programmatic bot triggers, and enforces login security policies.",
+      "crossSite": false,
+      "dataCollected": ["security_status", "language", "fraud_check"]
+    },
+    {
+      "patterns": ["cookie-consent", "cookieconsent_status", "cc_cookie", "cookie_consent", "GDPR", "CCPA"],
+      "company": "Various Sites",
+      "product": "Cookie Policy Consent",
+      "category": "essential",
+      "risk": "low",
+      "description": "Saves consent preferences (Accept / Reject) chosen by the user for cookie compliance laws.",
       "crossSite": false,
       "dataCollected": ["consent_preferences"]
     },
     {
-      "patterns": ["session", "sess", "sessionid", "session_id"],
-      "company": "Website",
-      "product": "Session Management",
+      "patterns": ["session", "sess", "sessionid", "session_id", "PHPSESSID", "JSESSIONID", "ASPSESSIONID", "connect.sid"],
+      "company": "Various Sites",
+      "product": "Active Session Token",
       "category": "essential",
       "risk": "low",
-      "description": "Keeps you logged in while you browse — deleted when you close the browser",
+      "description": "Temporary ID linking requests to the server. Keeps you logged in or remembers your progress. Deleted on browser close.",
       "crossSite": false,
-      "dataCollected": ["session_token"]
+      "dataCollected": ["session_id"]
     },
     {
-      "patterns": ["csrf", "csrftoken", "_csrf", "XSRF-TOKEN"],
-      "company": "Website",
-      "product": "Security Token",
+      "patterns": ["csrf", "csrftoken", "_csrf", "XSRF-TOKEN", "__RequestVerificationToken"],
+      "company": "Various Sites",
+      "product": "Anti-Cross Site Request Forgery Security",
       "category": "essential",
       "risk": "low",
-      "description": "Protects you from hackers submitting fake forms in your name",
+      "description": "A unique token checking if actions originated inside the site interface, preventing session hijack exploits.",
       "crossSite": false,
       "dataCollected": ["security_token"]
     },
     {
       "patterns": ["cart", "basket", "shopping_cart", "cart_id"],
-      "company": "Website",
-      "product": "Shopping Cart",
+      "company": "Various Sites",
+      "product": "Shopping Cart Session",
       "category": "essential",
       "risk": "low",
-      "description": "Remembers what you put in your shopping cart",
+      "description": "Remembers items added to the virtual shopping cart as you navigate across shop catalogs.",
       "crossSite": false,
-      "dataCollected": ["cart_items"]
+      "dataCollected": ["cart_contents"]
     },
     {
       "patterns": ["pref", "preferences", "settings", "theme", "lang", "language"],
-      "company": "Website",
-      "product": "User Preferences",
+      "company": "Various Sites",
+      "product": "Local User Preferences",
       "category": "essential",
       "risk": "low",
-      "description": "Remembers your settings like dark mode or language choice",
+      "description": "Saves user settings, screen zoom options, dark/light theme choices, and preferred languages.",
       "crossSite": false,
       "dataCollected": ["user_preferences"]
+    },
+    {
+      "patterns": ["messagesUtk"],
+      "company": "HubSpot",
+      "product": "Support Chat Analytics",
+      "category": "analytics",
+      "risk": "medium",
+      "description": "Links customer live support chat messages across website sub-pages to build thread profiles.",
+      "crossSite": false,
+      "dataCollected": ["chat_messages", "visitor_id"]
+    },
+    {
+      "patterns": ["vuid", "_vuid"],
+      "company": "Vimeo",
+      "product": "Vimeo Video Player Analytics",
+      "category": "analytics",
+      "risk": "medium",
+      "description": "Tracks users' actions when viewing embedded Vimeo videos to feed creator engagement charts.",
+      "crossSite": true,
+      "dataCollected": ["video_engagement", "watch_history", "device_type"]
+    },
+    {
+      "patterns": ["disqus_unique"],
+      "company": "Disqus",
+      "product": "Comment System Identity",
+      "category": "tracking",
+      "risk": "high",
+      "description": "Tracks users across different blogs and websites using Disqus comments for target advertising profiles.",
+      "crossSite": true,
+      "dataCollected": ["pages_visited", "comment_activity", "interests"]
+    },
+    {
+      "patterns": ["cf_use_ob"],
+      "company": "Cloudflare",
+      "product": "Always Online Network Cache",
+      "category": "essential",
+      "risk": "low",
+      "description": "Instructs web traffic to load cached versions of offline resources to prevent service interruptions.",
+      "crossSite": false,
+      "dataCollected": ["cache_status"]
     }
   ],
   "domainMappings": {

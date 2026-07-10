@@ -13,54 +13,135 @@
         <div class="domain" id="siteName">Analyzing...</div>
         <div class="status" id="riskStatus">Calculating risk...</div>
       </div>
-      <div class="total-score" id="totalScore">--</div>
+      <div class="header-actions">
+        <div class="total-score" id="totalScore">--</div>
+        <button id="toggleViewBtn" class="btn-toggle-view" title="Toggle Settings/Scanner">🛡️ Rules</button>
+      </div>
     </header>
 
-    <!-- Summary Stats -->
-    <div class="stats-bar">
-      <div class="stat-item">
-        <span class="stat-val" id="totalCount">0</span>
-        <span class="stat-label">Cookies</span>
+    <!-- VIEW 1: COOKIE SCANNER VIEW -->
+    <div id="scannerView" class="view-panel">
+      <!-- Summary Stats -->
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-val" id="totalCount">0</span>
+          <span class="stat-label">Total</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val danger" id="trackerCount">0</span>
+          <span class="stat-label">Trackers</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val warning" id="unknownCount">0</span>
+          <span class="stat-label">Unknown</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val safe" id="blockedCount">0</span>
+          <span class="stat-label">Blocked</span>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="stat-val danger" id="trackerCount">0</span>
-        <span class="stat-label">Trackers</span>
+
+      <!-- Sync Alert -->
+      <div id="syncAlert" class="sync-alert" style="display: none;">
+        <div class="sync-icon">⚠️</div>
+        <div class="sync-content">
+          <div class="sync-title">Tracker Sync Detected</div>
+          <div class="sync-desc" id="syncDesc">Multiple companies are sharing your ID.</div>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="stat-val safe" id="essentialCount">0</span>
-        <span class="stat-label">Essential</span>
+
+      <!-- Search Box -->
+      <div class="search-bar">
+        <input type="text" id="cookieSearch" placeholder="Search cookies or domains..." autocomplete="off">
+      </div>
+
+      <!-- Bulk Actions Drawer (Slides up when cookies selected) -->
+      <div id="bulkActionsBar" class="bulk-actions-bar">
+        <div class="bulk-select-wrapper">
+          <input type="checkbox" id="selectAllCheckbox">
+          <label for="selectAllCheckbox" id="selectAllLabel">All (0)</label>
+        </div>
+        <div class="bulk-buttons">
+          <button id="blockSelectedBtn" class="btn-danger-sm">Block</button>
+          <button id="unblockSelectedBtn" class="btn-secondary-sm">Unblock</button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-bar">
+        <button class="filter active" data-filter="all">All</button>
+        <button class="filter" data-filter="tracking">Trackers</button>
+        <button class="filter" data-filter="advertising">Ads</button>
+        <button class="filter" data-filter="analytics">Analytics</button>
+        <button class="filter" data-filter="essential">Essential</button>
+        <button class="filter" data-filter="unknown">Unknown</button>
+      </div>
+
+      <!-- Cookie List -->
+      <div class="cookie-list" id="cookieList">
+        <!-- Items injected by JS -->
+      </div>
+
+      <!-- Actions -->
+      <footer class="actions">
+        <button id="blockTrackers" class="btn-danger">Block Trackers</button>
+        <button id="exportBtn" class="btn-secondary">Export Report</button>
+      </footer>
+    </div>
+
+    <!-- VIEW 2: PRIVACY RULES VIEW -->
+    <div id="rulesView" class="view-panel" style="display: none;">
+      <div class="rules-container">
+        <h3 class="section-title">Category Rules</h3>
+        <p class="section-desc">Automatically intercept and block cookies set by these groups.</p>
+        
+        <div class="rule-card">
+          <div class="rule-info">
+            <span class="rule-title">Block Trackers & Ads</span>
+            <span class="rule-desc">Prevents behavioral profiling cookies (🔴 High Risk)</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="blockTrackersRule">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-info">
+            <span class="rule-title">Block Analytics</span>
+            <span class="rule-desc">Prevents visitor counters and tracking tools (🟡 Medium Risk)</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="blockAnalyticsRule">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-info">
+            <span class="rule-title">Block Unknown Cookies</span>
+            <span class="rule-desc">Blocks any cookies not in the database (⚠️ Warning Status)</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="blockUnknownRule">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3 class="section-title">Active Blocklist</h3>
+        <p class="section-desc">Cookies that are blocked individually for this browser.</p>
+        
+        <div id="blockedCookiesList" class="blocked-items-list">
+          <!-- Populated by JS -->
+        </div>
+
+        <button id="resetAllBlocksBtn" class="btn-reset">Reset All Privacy Rules</button>
       </div>
     </div>
 
-    <!-- Add this inside the .container div, right after .stats-bar -->
-<div id="syncAlert" class="sync-alert" style="display: none;">
-  <div class="sync-icon">⚠️</div>
-  <div class="sync-content">
-    <div class="sync-title">Tracker Sync Detected</div>
-    <div class="sync-desc" id="syncDesc">Multiple companies are sharing your ID.</div>
   </div>
-</div>
-    <!-- Filters -->
-    <div class="filter-bar">
-      <button class="filter active" data-filter="all">All</button>
-      <button class="filter" data-filter="tracking">Trackers</button>
-      <button class="filter" data-filter="advertising">Ads</button>
-      <button class="filter" data-filter="analytics">Analytics</button>
-      <button class="filter" data-filter="essential">Essential</button>
-    </div>
-
-    <!-- Cookie List -->
-    <div class="cookie-list" id="cookieList">
-      <!-- Items injected by JS -->
-    </div>
-
-    
-    <!-- Actions -->
-    <footer class="actions">
-      <button id="blockTrackers" class="btn-danger">Block Trackers</button>
-      <button id="exportBtn" class="btn-secondary">Export JSON</button>
-    </footer>
-  </div>
-  <script src="popup.js"></script>
+  <script src="popup.js" type="module"></script>
 </body>
 </html>
