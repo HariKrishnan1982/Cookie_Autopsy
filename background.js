@@ -1,4 +1,4 @@
-// background.js - Professional Modular Architecture v1.1
+// background.js - Professional Modular Architecture v1.2
 import { getSignatures } from './lib/signature-manager.js';
 import { classifyCookie } from './lib/classifier.js';
 import { calculateRisk } from './lib/risk-scorer.js';
@@ -6,6 +6,9 @@ import { detectSyncGroups } from './lib/sync-detector.js';
 
 // Global signature cache
 let currentSignatures = null;
+
+// In-memory tab detected cookies log: tabId -> { "name::domain": cookieDetails }
+const tabDetectedCookies = {};
 
 // Initialize on startup
 (async () => {
@@ -18,6 +21,87 @@ let currentSignatures = null;
   }
 })();
 
+// Helper: get cookie url for chrome.cookies API
+function getCookieUrl(cookie) {
+  let domain = cookie.domain;
+  if (domain.startsWith('.')) {
+    domain = domain.substring(1);
+  }
+  const protocol = cookie.secure ? 'https' : 'http';
+  return `${protocol}://${domain}${cookie.path || '/'}`;
+}
+
+// Check if a cookie is blocked under active rules
+async function isCookieBlocked(cookie, classification) {
+  const data = await chrome.storage.local.get('blocked_cookies');
+  const blocks = data.blocked_cookies || { individual: {}, categories: {}, domains: {} };
+  
+  // 1. Check individual block
+  const individualKey = `${cookie.name}::${cookie.domain}`;
+  if (blocks.individual && blocks.individual[individualKey]) {
+    return true;
+  }
+  
+  // 2. Check category block
+  const category = classification.category || 'unknown';
+  if (blocks.categories && blocks.categories[category]) {
+    return true;
+  }
+  
+  // 3. Check domain block
+  const cleanDomain = cookie.domain.replace(/^\./, '');
+  if (blocks.domains) {
+    for (const d of Object.keys(blocks.domains)) {
+      if (blocks.domains[d] && cleanDomain.includes(d)) {
+        return true;
+      }
+    }
+  }
+  
+  return false;
+}
+
+// Record a detected cookie into matching tabs' log
+async function recordDetectedCookie(cookie, classification, riskScore, isBlocked) {
+  try {
+    const tabs = await chrome.tabs.query({});
+    const cookieDomain = cookie.domain.replace(/^\./, '');
+    
+    for (const tab of tabs) {
+      if (!tab.url) continue;
+      try {
+        const tabUrl = new URL(tab.url);
+        const tabHostname = tabUrl.hostname;
+        
+        if (tabHostname.includes(cookieDomain) || cookieDomain.includes(tabHostname)) {
+          if (!tabDetectedCookies[tab.id]) {
+            tabDetectedCookies[tab.id] = {};
+          }
+          const key = `${cookie.name}::${cookie.domain}`;
+          tabDetectedCookies[tab.id][key] = {
+            name: cookie.name,
+            domain: cookie.domain,
+            path: cookie.path,
+            secure: cookie.secure,
+            httpOnly: cookie.httpOnly,
+            sameSite: cookie.sameSite,
+            expirationDate: cookie.expirationDate,
+            classification,
+            riskScore,
+            blocked: isBlocked,
+            active: !isBlocked,
+            humanExpiry: cookie.expirationDate
+              ? new Date(cookie.expirationDate * 1000).toLocaleDateString()
+              : 'Session'
+          };
+        }
+      } catch (err) {}
+    }
+  } catch (e) {
+    console.error('[Cookie Autopsy] Error recording detected cookie:', e);
+  }
+}
+
 // ============================================
 // CORE COOKIE FUNCTIONS
 // ============================================
@@ -26,48 +110,107 @@ async function getCookiesForActiveTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab || !tab.url) return [];
 
-  // Ensure signatures are loaded
-  if (!currentSignatures) currentSignatures = await getSignatures();
-
+  const tabId = tab.id;
   const url = new URL(tab.url);
   const hostname = url.hostname;
 
-  // Get cookies for exact hostname AND parent domains (fixes Wikimedia issue)
-  let cookies = await chrome.cookies.getAll({ domain: hostname });
+  // Ensure signatures are loaded
+  if (!currentSignatures) currentSignatures = await getSignatures();
 
+  // Get active cookies for host and parent domains
+  let cookies = await chrome.cookies.getAll({ domain: hostname });
   const parts = hostname.split('.');
   for (let i = 1; i < parts.length - 1; i++) {
     const parentDomain = '.' + parts.slice(i).join('.');
     try {
       const parentCookies = await chrome.cookies.getAll({ domain: parentDomain });
       cookies = cookies.concat(parentCookies);
-    } catch (e) { /* Skip inaccessible parent domains */ }
+    } catch (e) {}
   }
 
   // Deduplicate
   const seen = new Set();
-  const unique = [];
+  const uniqueActive = [];
   for (const cookie of cookies) {
     const key = `${cookie.name}@${cookie.domain}`;
     if (!seen.has(key)) {
       seen.add(key);
-      unique.push(cookie);
+      uniqueActive.push(cookie);
     }
   }
 
-  // Classify and score each cookie
-  return unique.map(cookie => {
+  // Initialize tab log
+  if (!tabDetectedCookies[tabId]) {
+    tabDetectedCookies[tabId] = {};
+  }
+
+  // Fetch current blocklists
+  const data = await chrome.storage.local.get('blocked_cookies');
+  const blocks = data.blocked_cookies || { individual: {}, categories: {}, domains: {} };
+
+  // Add/update active cookies in log
+  for (const cookie of uniqueActive) {
     const classification = classifyCookie(cookie, currentSignatures);
     const riskScore = calculateRisk(cookie, classification);
-    return {
-      ...cookie,
+    
+    const key = `${cookie.name}::${cookie.domain}`;
+    const category = classification.category || 'unknown';
+    const cleanDomain = cookie.domain.replace(/^\./, '');
+    
+    let isBlocked = !!(blocks.individual && blocks.individual[key]) || 
+                    !!(blocks.categories && blocks.categories[category]);
+    
+    if (!isBlocked && blocks.domains) {
+      for (const d of Object.keys(blocks.domains)) {
+        if (blocks.domains[d] && cleanDomain.includes(d)) {
+          isBlocked = true;
+          break;
+        }
+      }
+    }
+
+    tabDetectedCookies[tabId][key] = {
+      name: cookie.name,
+      domain: cookie.domain,
+      path: cookie.path,
+      secure: cookie.secure,
+      httpOnly: cookie.httpOnly,
+      sameSite: cookie.sameSite,
+      expirationDate: cookie.expirationDate,
       classification,
       riskScore,
+      blocked: isBlocked,
+      active: !isBlocked,
       humanExpiry: cookie.expirationDate
         ? new Date(cookie.expirationDate * 1000).toLocaleDateString()
         : 'Session'
     };
-  }).sort((a, b) => b.riskScore.score - a.riskScore.score);
+  }
+
+  // Sync active states for everything in log
+  const activeKeys = new Set(uniqueActive.map(c => `${c.name}::${c.domain}`));
+  for (const key of Object.keys(tabDetectedCookies[tabId])) {
+    const cookieObj = tabDetectedCookies[tabId][key];
+    const category = cookieObj.classification.category || 'unknown';
+    const cleanDomain = cookieObj.domain.replace(/^\./, '');
+    
+    let isBlocked = !!(blocks.individual && blocks.individual[key]) || 
+                    !!(blocks.categories && blocks.categories[category]);
+    
+    if (!isBlocked && blocks.domains) {
+      for (const d of Object.keys(blocks.domains)) {
+        if (blocks.domains[d] && cleanDomain.includes(d)) {
+          isBlocked = true;
+          break;
+        }
+      }
+    }
+
+    cookieObj.blocked = isBlocked;
+    cookieObj.active = activeKeys.has(key) && !isBlocked;
+  }
+
+  return Object.values(tabDetectedCookies[tabId]).sort((a, b) => b.riskScore.score - a.riskScore.score);
 }
 
 async function updateBadge() {
@@ -95,47 +238,104 @@ async function updateBadge() {
   } catch (e) { /* Silent fail */ }
 }
 
-async function blockCookiesByCategory(category) {
-  if (!currentSignatures) currentSignatures = await getSignatures();
-
-  const allCookies = await chrome.cookies.getAll({});
-  const toBlock = [];
-
-  for (const cookie of allCookies) {
-    const cls = classifyCookie(cookie, currentSignatures);
-    if (cls.category === category) toBlock.push(cookie);
+// Individual block toggling
+async function toggleBlockIndividual(name, domain, block) {
+  const data = await chrome.storage.local.get('blocked_cookies');
+  const blocks = data.blocked_cookies || { individual: {}, categories: {}, domains: {} };
+  
+  if (!blocks.individual) blocks.individual = {};
+  
+  const key = `${name}::${domain}`;
+  if (block) {
+    blocks.individual[key] = true;
+    
+    // Remove immediately
+    const matched = await chrome.cookies.getAll({ name, domain });
+    for (const cookie of matched) {
+      try {
+        const url = getCookieUrl(cookie);
+        await chrome.cookies.remove({ url, name: cookie.name });
+      } catch (e) {}
+    }
+  } else {
+    delete blocks.individual[key];
   }
+  
+  await chrome.storage.local.set({ blocked_cookies: blocks });
+  return { success: true };
+}
 
-  let removed = 0;
-  const blockedDomains = new Set();
-
-  for (const cookie of toBlock) {
-    try {
-      const url = `http${cookie.secure ? 's' : ''}://${cookie.domain.replace(/^\./, '')}${cookie.path}`;
-      await chrome.cookies.remove({ url, name: cookie.name });
-      removed++;
-      blockedDomains.add(cookie.domain.replace(/^\./, ''));
-    } catch (e) { /* Skip failures */ }
+// Bulk block toggling
+async function blockMultiple(cookiesToBlock, block) {
+  const data = await chrome.storage.local.get('blocked_cookies');
+  const blocks = data.blocked_cookies || { individual: {}, categories: {}, domains: {} };
+  
+  if (!blocks.individual) blocks.individual = {};
+  
+  for (const c of cookiesToBlock) {
+    const key = `${c.name}::${c.domain}`;
+    if (block) {
+      blocks.individual[key] = true;
+      
+      // Remove immediately
+      const matched = await chrome.cookies.getAll({ name: c.name, domain: c.domain });
+      for (const cookie of matched) {
+        try {
+          const url = getCookieUrl(cookie);
+          await chrome.cookies.remove({ url, name: cookie.name });
+        } catch (e) {}
+      }
+    } else {
+      delete blocks.individual[key];
+    }
   }
+  
+  await chrome.storage.local.set({ blocked_cookies: blocks });
+  return { success: true };
+}
 
-  // Add declarative net request rules to prevent re-loading
-  if (blockedDomains.size > 0) {
-    const ruleId = Date.now();
-    await chrome.declarativeNetRequest.updateDynamicRules({
-      addRules: [{
-        id: ruleId,
-        priority: 1,
-        action: { type: 'block' },
-        condition: {
-          requestDomains: [...blockedDomains],
-          resourceTypes: ['script', 'xmlhttprequest', 'sub_frame']
-        }
-      }],
-      removeRuleIds: []
-    });
+// Category-wide blocking
+async function toggleBlockCategory(category, block) {
+  const data = await chrome.storage.local.get('blocked_cookies');
+  const blocks = data.blocked_cookies || { individual: {}, categories: {}, domains: {} };
+  
+  if (!blocks.categories) blocks.categories = {};
+  blocks.categories[category] = block;
+  
+  if (block) {
+    // Delete all current cookies matching this category
+    const allCookies = await chrome.cookies.getAll({});
+    if (!currentSignatures) currentSignatures = await getSignatures();
+    
+    for (const cookie of allCookies) {
+      const cls = classifyCookie(cookie, currentSignatures);
+      if (cls.category === category) {
+        try {
+          const url = getCookieUrl(cookie);
+          await chrome.cookies.remove({ url, name: cookie.name });
+        } catch (e) {}
+      }
+    }
   }
+  
+  await chrome.storage.local.set({ blocked_cookies: blocks });
+  return { success: true };
+}
 
-  return { blocked: removed, domains: [...blockedDomains] };
+async function clearAllBlocks() {
+  const emptyBlocks = {
+    individual: {},
+    categories: {
+      essential: false,
+      analytics: false,
+      advertising: false,
+      tracking: false,
+      unknown: false
+    },
+    domains: {}
+  };
+  await chrome.storage.local.set({ blocked_cookies: emptyBlocks });
+  return { success: true };
 }
 
 async function generateExport(format = 'json') {
@@ -154,14 +354,15 @@ async function generateExport(format = 'json') {
     const cls = classifyCookie(cookie, currentSignatures);
     const risk = calculateRisk(cookie, cls);
 
-    report.summary[cls.category] = (report.summary[cls.category] || 0) + 1;
+    const cat = cls.category || 'unknown';
+    report.summary[cat] = (report.summary[cat] || 0) + 1;
     if (risk.level === 'high') report.highRiskDomains.push(cookie.domain);
 
     report.cookies.push({
       name: cookie.name,
       domain: cookie.domain,
       path: cookie.path,
-      category: cls.category,
+      category: cat,
       company: cls.company,
       product: cls.product,
       riskScore: risk.score,
@@ -214,8 +415,35 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  if (request.action === 'toggleBlockIndividual') {
+    toggleBlockIndividual(request.name, request.domain, request.block).then(sendResponse);
+    return true;
+  }
+
+  if (request.action === 'blockMultiple') {
+    blockMultiple(request.cookies, request.block).then(sendResponse);
+    return true;
+  }
+
+  if (request.action === 'toggleBlockCategory') {
+    toggleBlockCategory(request.category, request.block).then(sendResponse);
+    return true;
+  }
+
   if (request.action === 'blockByCategory') {
-    blockCookiesByCategory(request.category).then(sendResponse);
+    toggleBlockCategory(request.category, true).then(sendResponse);
+    return true;
+  }
+
+  if (request.action === 'clearAllBlocks') {
+    clearAllBlocks().then(sendResponse);
+    return true;
+  }
+
+  if (request.action === 'getBlockedCookies') {
+    chrome.storage.local.get('blocked_cookies').then(data => {
+      sendResponse(data.blocked_cookies || { individual: {}, categories: {}, domains: {} });
+    });
     return true;
   }
 
@@ -239,21 +467,41 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 chrome.cookies.onChanged.addListener(async (changeInfo) => {
   const { cookie, removed, cause } = changeInfo;
-  if (cause === 'explicit' && removed) return;
+  if (removed) return;
+  if (cause === 'explicit') return;
 
   if (!currentSignatures) currentSignatures = await getSignatures();
 
   const classification = classifyCookie(cookie, currentSignatures);
+  const blocked = await isCookieBlocked(cookie, classification);
+  
   const riskScore = calculateRisk(cookie, classification);
 
-  updateBadge();
+  if (blocked) {
+    try {
+      const url = getCookieUrl(cookie);
+      await chrome.cookies.remove({ url, name: cookie.name });
+      console.log(`[Cookie Autopsy] Auto-removed blocked cookie: ${cookie.name} from ${cookie.domain}`);
+      await recordDetectedCookie(cookie, classification, riskScore, true);
+    } catch (e) {
+      console.error('[Cookie Autopsy] Failed to auto-remove blocked cookie:', e);
+    }
+  } else {
+    await recordDetectedCookie(cookie, classification, riskScore, false);
+    updateBadge();
 
-  if (!removed && riskScore.level === 'high' && classification.category === 'tracking') {
-    notifyContentScript(cookie.domain, classification, riskScore, removed);
+    if (riskScore.level === 'high' && classification.category === 'tracking') {
+      notifyContentScript(cookie.domain, classification, riskScore, removed);
+    }
   }
 });
 
 chrome.tabs.onActivated.addListener(updateBadge);
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete') updateBadge();
+  if (changeInfo.status === 'loading') {
+    tabDetectedCookies[tabId] = {};
+  }
+  if (changeInfo.status === 'complete') {
+    updateBadge();
+  }
 });
