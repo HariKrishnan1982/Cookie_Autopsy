@@ -3,7 +3,7 @@
   "name": "Cookie Autopsy",
   "version": "1.1.0",
   "description": "Professional Cookie Analysis & Compliance Tool",
-  "permissions": ["cookies", "activeTab", "storage", "declarativeNetRequest", "notifications", "downloads"],
+  "permissions": ["cookies", "activeTab", "storage", "declarativeNetRequest", "downloads"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js",

@@ -7,7 +7,6 @@
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
     <header class="header">
       <div class="site-info">
         <div class="domain" id="siteName">Analyzing...</div>
@@ -16,7 +15,6 @@
       <div class="total-score" id="totalScore">--</div>
     </header>
 
-    <!-- Summary Stats -->
     <div class="stats-bar">
       <div class="stat-item">
         <span class="stat-val" id="totalCount">0</span>
@@ -32,15 +30,14 @@
       </div>
     </div>
 
-    <!-- Add this inside the .container div, right after .stats-bar -->
-<div id="syncAlert" class="sync-alert" style="display: none;">
-  <div class="sync-icon">⚠️</div>
-  <div class="sync-content">
-    <div class="sync-title">Tracker Sync Detected</div>
-    <div class="sync-desc" id="syncDesc">Multiple companies are sharing your ID.</div>
-  </div>
-</div>
-    <!-- Filters -->
+    <div id="syncAlert" class="sync-alert" style="display: none;">
+      <div class="sync-icon">⚠️</div>
+      <div class="sync-content">
+        <div class="sync-title">Tracker Sync Detected</div>
+        <div class="sync-desc" id="syncDesc">Multiple companies sharing ID.</div>
+      </div>
+    </div>
+
     <div class="filter-bar">
       <button class="filter active" data-filter="all">All</button>
       <button class="filter" data-filter="tracking">Trackers</button>
@@ -49,13 +46,8 @@
       <button class="filter" data-filter="essential">Essential</button>
     </div>
 
-    <!-- Cookie List -->
-    <div class="cookie-list" id="cookieList">
-      <!-- Items injected by JS -->
-    </div>
+    <div class="cookie-list" id="cookieList"></div>
 
-    
-    <!-- Actions -->
     <footer class="actions">
       <button id="blockTrackers" class="btn-danger">Block Trackers</button>
       <button id="exportBtn" class="btn-secondary">Export JSON</button>
